@@ -1,12 +1,18 @@
 package org.vickdlaluzz.examples.models;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.*;
 import org.vickdlaluzz.examples.exception.NotEnoughBalanceException;
 
 import java.math.BigDecimal;
+import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/*
+* @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+* @TestInstance(TestInstance.Lifecycle.PER_METHOD)
+* */
 class CuentaTest {
     Cuenta cuenta1;
 
@@ -141,5 +147,45 @@ class CuentaTest {
                 ()-> assertEquals(2, bank.getCuentas().size(), () -> "No se asignaron las cuentas al banco correctamente"),
                 ()-> assertEquals("Santander", cuenta1.getBank().getName(), () -> "No se asigno el banco a las cuentas correctamente")
         );
+    }
+    
+    /*
+    * Test condicionales
+    * */
+
+    @Test
+    @EnabledOnOs(OS.WINDOWS) // Solo se ejecuta dependiendo el sistema operativo
+    void testSoloWindows() {
+        System.out.println("Test ejecutado SOLO WINDOWS");
+    }
+
+    @Test
+    @EnabledOnOs({OS.LINUX, OS.MAC}) // Solo se ejecuta dependiendo el sistema operativo
+    void testSoloLinux() {
+        System.out.println("Test ejecutado SOLO LINUX");
+    }
+
+    @Test
+    @DisabledOnOs(OS.WINDOWS) // No se ejecuta dependiendo el sistema operativo
+    void testNoWindows() {
+        System.out.println("Test ejecutado si no es windows");
+    }
+
+    @Test
+    @EnabledOnJre({JRE.JAVA_8, JRE.JAVA_17}) // Solo se ejecuta dependiendo del JRE
+    void testOnlyJre() {
+        System.out.println("Test ejecutado si es JRE 8  y 17");
+    }
+
+    @Test
+    void genericTest() {
+        Properties props = System.getProperties();
+        props.forEach((k, v) -> System.out.println(k + ": " + v));
+    }
+
+    @Test
+    @EnabledIfSystemProperty(named = "os.arch", matches = "amd64") // Solo se ejecuta si cierta propiedad del sistema coincide con el valor
+    void testIfProps() {
+        System.out.println("os.arch == amd64");
     }
 }
