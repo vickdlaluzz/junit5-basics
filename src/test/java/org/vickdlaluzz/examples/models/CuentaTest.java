@@ -10,12 +10,34 @@ import static org.junit.jupiter.api.Assertions.*;
 class CuentaTest {
     Cuenta cuenta1;
 
+    /*
+     * @BeforeAll se ejecuta antes de la instancia de la clase test
+     * */
+    @BeforeAll
+    static void beforeAll() {
+        System.out.println("Inicializando el test\nAdquiriendo recursos");
+    }
+
+    /*
+     * @BeforeEach se ejecuta antes de cada metodo de test
+     * */
     @BeforeEach
     void initMetodoTest() {
         System.out.println("Inicializando el metodo");
         cuenta1 = new Cuenta("Victor", new BigDecimal("2000.01"));
     }
 
+    /*
+     * @AfterAll se ejecuta despues de la instancia de la clase test
+     * */
+    @AfterAll
+    static void afterAll() {
+        System.out.println("Finalizando el test\nCerrando recursos");
+    }
+
+    /*
+     * @AfterAll se ejecuta despues de cada metodo de test
+     * */
     @AfterEach
     void tearDown() {
         System.out.println("finalizando el metodo");
