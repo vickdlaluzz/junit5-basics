@@ -1,9 +1,6 @@
 package org.vickdlaluzz.examples.models;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.vickdlaluzz.examples.exception.NotEnoughBalanceException;
 
 import java.math.BigDecimal;
@@ -11,6 +8,18 @@ import java.math.BigDecimal;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CuentaTest {
+    Cuenta cuenta1;
+
+    @BeforeEach
+    void initMetodoTest() {
+        System.out.println("Inicializando el metodo");
+        cuenta1 = new Cuenta("Victor", new BigDecimal("2000.01"));
+    }
+
+    @AfterEach
+    void tearDown() {
+        System.out.println("finalizando el metodo");
+    }
 
     /*
     * Test deshabilitado
@@ -19,9 +28,9 @@ class CuentaTest {
     @Disabled
     @DisplayName("Testing that the account name is returned")
     void testCuentaName() {
-        Cuenta cuenta = new Cuenta("Victor", new BigDecimal("1000.1234"));
+
         String esperado = "Victor";
-        String real = cuenta.getPerson();
+        String real = cuenta1.getPerson();
         // Mensaje personalizado con expresion lamda
         // No se crea el string hasta que el test falla
         Assertions.assertEquals(esperado, real, () -> "El nombre de la cuenta no es el esperado");
@@ -30,10 +39,9 @@ class CuentaTest {
     @Test
     @DisplayName("Testing that the balance is returned")
     void testAccountBalance() {
-        Cuenta cuenta = new Cuenta("Adolfo", new BigDecimal("332.23890232"));
-        assertEquals(332.23890232, cuenta.getBalance().doubleValue(), () -> "El valor del saldo no es el esperado");
-        assertFalse(cuenta.getBalance().compareTo(BigDecimal.ZERO) < 0);
-        assertTrue(cuenta.getBalance().compareTo(BigDecimal.ZERO) > 0);
+        assertEquals(2000.01, cuenta1.getBalance().doubleValue(), () -> "El valor del saldo no es el esperado");
+        assertFalse(cuenta1.getBalance().compareTo(BigDecimal.ZERO) < 0);
+        assertTrue(cuenta1.getBalance().compareTo(BigDecimal.ZERO) > 0);
     }
 
     @Test
@@ -47,10 +55,9 @@ class CuentaTest {
     @Test
     @DisplayName("Testing that the amount is substracted when the debit operation is realized")
     void testDebitoAccount() {
-        Cuenta cuenta = new Cuenta("Victor", new BigDecimal("99999.999"));
-        cuenta.debito(new BigDecimal(100));
-        assertNotNull(cuenta.getBalance());
-        assertEquals(99899, cuenta.getBalance().intValue());
+        cuenta1.debito(new BigDecimal(100));
+        assertNotNull(cuenta1.getBalance());
+        assertEquals(1900, cuenta1.getBalance().intValue());
     }
 
     @Test
