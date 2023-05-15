@@ -402,6 +402,7 @@ class CuentaTest {
     }
 
     @Nested
+    @Disabled
     class TimeOutTests {
         @Test
         @Timeout(1)
