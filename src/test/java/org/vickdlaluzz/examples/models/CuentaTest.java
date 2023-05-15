@@ -8,6 +8,7 @@ import java.math.BigDecimal;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.*;
 
 /*
 * @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -206,5 +207,32 @@ class CuentaTest {
     @DisabledIfEnvironmentVariable(named = "ENVIROMENT", matches = "prod")
     void testEviromentProdDisabled() {
         System.out.println("Solo de desactiva si esta en produccion");
+    }
+
+    @Test
+    @DisplayName("Testing the balance account with assumptions")
+    void testSaldoCuentaDev() {
+        boolean esDev = "dev".equals(System.getProperty("ENV"));
+        /*
+         * assumeTrue()
+         * deshabilita el test si una condicion se cumple, a diferencia de las anotaciones
+         * este metodo sirve para evaluar las condiciones de manera programatica
+         * */
+        assumeTrue(esDev);
+        assertNotNull(cuenta1.getBalance());
+    }
+
+    @Test
+    @DisplayName("Testing the balance account")
+    void testSaldoCuentaWithAssumingThat() {
+        boolean esDev = "dev".equals(System.getProperty("ENV"));
+        /*
+         * assumingThat()
+         * recibe como argumentos la condicion y un ejecutable (expresion lambda)
+         * no salta toda la prueba, solo el bloque de codigo que esta dentro del lambda
+         * */
+        assumingThat(esDev, () -> {
+            assertNotNull(cuenta1.getBalance());
+        });
     }
 }
