@@ -10,9 +10,11 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.vickdlaluzz.examples.exception.NotEnoughBalanceException;
 
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.*;
@@ -337,48 +339,57 @@ class CuentaTest {
         }
     }
 
-    @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
-    @DisplayName("Testing using value source")
-    @ValueSource(strings = {
-            "100",
-            "200",
-            "300",
-            "500"
-    })
-    void testCreditAccount(String amount) {
-        BigDecimal initBalance = cuenta1.getBalance();
-        BigDecimal endBalance = cuenta1.getBalance().add(new BigDecimal(amount));
-        cuenta1.credito(new BigDecimal(amount));
-        assertEquals(endBalance, cuenta1.getBalance());
+
+    @Tag("Parametrized")
+    @Nested
+    class ParametrizedTests {
+
+        @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+        @DisplayName("Testing using value source")
+        @ValueSource(strings = {
+                "100",
+                "200",
+                "300",
+                "500"
+        })
+        void testCreditAccount(String amount) {
+            BigDecimal initBalance = cuenta1.getBalance();
+            BigDecimal endBalance = cuenta1.getBalance().add(new BigDecimal(amount));
+            cuenta1.credito(new BigDecimal(amount));
+            assertEquals(endBalance, cuenta1.getBalance());
+
+        }
+
+
+        @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+        @DisplayName("Testing using csv Source")
+        @CsvSource({
+                "1,100",
+                "2,200",
+                "3,300",
+                "4,500"
+        })
+        void testCreditAccountWithCsv(String index, String amount) {
+            System.out.println(index + " -> " + amount);
+            BigDecimal initBalance = cuenta1.getBalance();
+            BigDecimal endBalance = cuenta1.getBalance().add(new BigDecimal(amount));
+            cuenta1.credito(new BigDecimal(amount));
+            assertEquals(endBalance, cuenta1.getBalance());
+
+        }
+
+        @ParameterizedTest()
+        @DisplayName("Testing using a csv file")
+        @CsvFileSource(resources = "/data.csv")
+        void testWithCsvFile(String index, String name, String initBalance) {
+            Cuenta cuenta = new Cuenta(name,new BigDecimal(initBalance));
+            assertEquals(new BigDecimal(initBalance), cuenta.getBalance());
+        }
+
 
     }
 
-
-    @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
-    @DisplayName("Testing using csv Source")
-    @CsvSource({
-            "1,100",
-            "2,200",
-            "3,300",
-            "4,500"
-    })
-    void testCreditAccountWithCsv(String index, String amount) {
-        System.out.println(index + " -> " + amount);
-        BigDecimal initBalance = cuenta1.getBalance();
-        BigDecimal endBalance = cuenta1.getBalance().add(new BigDecimal(amount));
-        cuenta1.credito(new BigDecimal(amount));
-        assertEquals(endBalance, cuenta1.getBalance());
-
-    }
-
-    @ParameterizedTest()
-    @DisplayName("Testing using a csv file")
-    @CsvFileSource(resources = "/data.csv")
-    void testWithCsvFile(String index, String name, String initBalance) {
-        Cuenta cuenta = new Cuenta(name,new BigDecimal(initBalance));
-        assertEquals(new BigDecimal(initBalance), cuenta.getBalance());
-    }
-
+    @Tag("Parametrized")
     @ParameterizedTest()
     @DisplayName("Testing using a method")
     @MethodSource("getMontoList")
@@ -389,4 +400,27 @@ class CuentaTest {
     static List<String> getMontoList() {
         return Arrays.asList("100","200","300");
     }
+
+    @Nested
+    class TimeOutTests {
+        @Test
+        @Timeout(1)
+        void testTimeOut() throws InterruptedException {
+            TimeUnit.SECONDS.sleep(1);
+        }
+
+        @Test
+        @Timeout(value= 500, unit = TimeUnit.MILLISECONDS)
+        void testTimeOut2() throws InterruptedException {
+            TimeUnit.MILLISECONDS.sleep(500);
+        }
+
+        @Test
+        void testTimeOutAssertions() {
+            assertTimeout(Duration.ofSeconds(5), () -> {
+                TimeUnit.MILLISECONDS.sleep(5000);
+            });
+        }
+    }
+
 }
