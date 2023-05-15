@@ -322,4 +322,13 @@ class CuentaTest {
 
         }
     }
+
+    @RepeatedTest(value = 10, name = "Repeticion numero {currentRepetition} de {totalRepetitions}")
+    void testDebitoRepetitions(RepetitionInfo info) {
+        if (info.getCurrentRepetition() == 3) {
+            System.out.println("Esta es la tercera repeticion");
+        }
+    }
+
+
 }
