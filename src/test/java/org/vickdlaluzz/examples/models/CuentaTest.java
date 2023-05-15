@@ -3,10 +3,15 @@ package org.vickdlaluzz.examples.models;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvFileSource;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.vickdlaluzz.examples.exception.NotEnoughBalanceException;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -333,6 +338,7 @@ class CuentaTest {
     }
 
     @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+    @DisplayName("Testing using value source")
     @ValueSource(strings = {
             "100",
             "200",
@@ -345,5 +351,42 @@ class CuentaTest {
         cuenta1.credito(new BigDecimal(amount));
         assertEquals(endBalance, cuenta1.getBalance());
 
+    }
+
+
+    @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+    @DisplayName("Testing using csv Source")
+    @CsvSource({
+            "1,100",
+            "2,200",
+            "3,300",
+            "4,500"
+    })
+    void testCreditAccountWithCsv(String index, String amount) {
+        System.out.println(index + " -> " + amount);
+        BigDecimal initBalance = cuenta1.getBalance();
+        BigDecimal endBalance = cuenta1.getBalance().add(new BigDecimal(amount));
+        cuenta1.credito(new BigDecimal(amount));
+        assertEquals(endBalance, cuenta1.getBalance());
+
+    }
+
+    @ParameterizedTest()
+    @DisplayName("Testing using a csv file")
+    @CsvFileSource(resources = "/data.csv")
+    void testWithCsvFile(String index, String name, String initBalance) {
+        Cuenta cuenta = new Cuenta(name,new BigDecimal(initBalance));
+        assertEquals(new BigDecimal(initBalance), cuenta.getBalance());
+    }
+
+    @ParameterizedTest()
+    @DisplayName("Testing using a method")
+    @MethodSource("getMontoList")
+    void testWithMethod(String monto) {
+        cuenta1.credito(new BigDecimal(monto));
+    }
+
+    static List<String> getMontoList() {
+        return Arrays.asList("100","200","300");
     }
 }
