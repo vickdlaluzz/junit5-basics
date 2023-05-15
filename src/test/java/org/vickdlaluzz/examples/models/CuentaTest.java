@@ -2,6 +2,8 @@ package org.vickdlaluzz.examples.models;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.*;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.vickdlaluzz.examples.exception.NotEnoughBalanceException;
 
 import java.math.BigDecimal;
@@ -330,5 +332,18 @@ class CuentaTest {
         }
     }
 
+    @ParameterizedTest(name = "numero {index} ejecutando con valor {0} - {argumentsWithNames}")
+    @ValueSource(strings = {
+            "100",
+            "200",
+            "300",
+            "500"
+    })
+    void testCreditAccount(String amount) {
+        BigDecimal initBalance = cuenta1.getBalance();
+        BigDecimal endBalance = cuenta1.getBalance().add(new BigDecimal(amount));
+        cuenta1.credito(new BigDecimal(amount));
+        assertEquals(endBalance, cuenta1.getBalance());
 
+    }
 }
