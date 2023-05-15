@@ -188,4 +188,23 @@ class CuentaTest {
     void testIfProps() {
         System.out.println("os.arch == amd64");
     }
+
+    @Test
+    void printEnviromentVars() {
+        System.getenv().forEach((k,v) -> {
+            System.out.println(k + ": " + v);
+        });
+    }
+
+    @Test
+    @EnabledIfEnvironmentVariable(named = "USERNAME", matches = "vickdlajluz")
+    void testUserName() {
+        System.out.println("Solo si USERNAME = vickdlaluz");
+    }
+
+    @Test
+    @DisabledIfEnvironmentVariable(named = "ENVIROMENT", matches = "prod")
+    void testEviromentProdDisabled() {
+        System.out.println("Solo de desactiva si esta en produccion");
+    }
 }
