@@ -235,4 +235,91 @@ class CuentaTest {
             assertNotNull(cuenta1.getBalance());
         });
     }
+
+    @Nested
+    @DisplayName("Testing by O.S. conditions")
+    class OperativeSystemTest {
+
+        @Test
+        @DisplayName("Testing if the OS is windows")
+        @EnabledOnOs(OS.WINDOWS)
+        void testIfWindows() {
+            System.out.println("Tested only if the operative system is Windows");
+        }
+
+        @Test
+        @DisplayName("Testing only in Linux")
+        @EnabledOnOs(OS.LINUX)
+        void testIfLinux() {
+            System.out.println("Tested only if OS is linux");
+        }
+
+        @Test
+        @DisplayName("Testing only if not Linux")
+        @DisabledOnOs(OS.LINUX)
+        void testIfNotLinux() {
+            System.out.println("Tested only if OS is not linux");
+        }
+    }
+
+    @Nested
+    @DisplayName("Testing by JRE conditions")
+    class JavaVersionTest {
+        @Test
+        @DisplayName("Test only if JAVA 8")
+        @EnabledOnJre(JRE.JAVA_8)
+        void testIfJVersion() {
+            System.out.println("Only in Java 8");
+        }
+
+        @Test
+        @DisplayName("Test only if not JAVA 8")
+        @DisabledOnJre(JRE.JAVA_8)
+        void testIfNotJVersion() {
+            System.out.println("Only if Not Java 8");
+        }
+
+
+    }
+
+    @Nested
+    @DisplayName("Testing by System properties conditions")
+    class SystemPropertiesTest {
+
+        @Test
+        void gettingSystemProps() {
+            System.getProperties().forEach((k, v) -> {
+                System.out.println(k + ": " + v);
+            });
+        }
+
+        @Test
+        @DisplayName("Test if os arch = amd64")
+        @EnabledIfSystemProperty(named = "os.arch", matches = "amd64", disabledReason = "O.S. is not amd64 arch")
+        void testIfSystemProp() {
+        }
+
+        @Test
+        @DisplayName("Test if os arch is not amd64")
+        @DisabledIfSystemProperty(named = "os.arch", matches = "amd64", disabledReason = "O.S. is amd64 arch")
+        void testIfNotSystemProp() {
+        }
+    }
+
+    @Nested
+    class EviromentVariablesTest {
+        @Test
+        @DisplayName("Test if ENV = DEV")
+        @EnabledIfEnvironmentVariable(named = "ENV", matches = "DEV")
+        void testIfEnv() {
+
+        }
+
+        @Test
+        @DisplayName("Test if ENV != DEV")
+        @DisabledIfEnvironmentVariable(named = "ENV", matches = "DEV")
+        void testIfNotEnv() {
+
+        }
+    }
 }
